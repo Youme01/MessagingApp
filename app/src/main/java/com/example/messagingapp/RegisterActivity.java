@@ -15,6 +15,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -22,6 +24,7 @@ public class RegisterActivity extends AppCompatActivity {
     EditText regEmail , regPassword;
     Button register;
     FirebaseAuth firebaseAuth;
+    DatabaseReference reference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,8 @@ public class RegisterActivity extends AppCompatActivity {
         register = findViewById(R.id.register);
         login = findViewById(R.id.loginTextView);
         firebaseAuth = FirebaseAuth.getInstance();
+
+        reference = FirebaseDatabase.getInstance().getReference();
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,6 +57,9 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if(task.isSuccessful()){
+
+                            String currentUserId = firebaseAuth.getCurrentUser().getUid();
+                            reference.child("Users").child(currentUserId).setValue("");
                             Toast.makeText(RegisterActivity.this,"Done",Toast.LENGTH_SHORT);
                             Intent intent = new Intent(RegisterActivity.this , SigninActivity.class);
                             finish();
